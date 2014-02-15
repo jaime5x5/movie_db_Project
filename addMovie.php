@@ -1,3 +1,6 @@
+<?php
+
+?>
 <html>
 <head>
 	<title>Add Movie</title>
@@ -5,7 +8,7 @@
 	<style type="text/css"></style>
 </head>
 	<body class="c0">
-		<form action="mvdbDisplay.html">
+		<form action="myMoviedb.php">
 		  	<div>
 		    	<input type="submit" value="UPDATE" />
 		    	<input type="submit" value="CANCEL" />

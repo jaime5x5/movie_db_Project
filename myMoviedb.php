@@ -1,18 +1,21 @@
+<?php 
+
+?>
 <html>
 <head>
 	<title>Movie Display</title>
 	<meta content="text/html; charset=UTF-8" http-equiv="content-type">
 	<style type="text/css"></style>
 </head>
-	<body class="c0">
-		<form action="addMovie.html" class="addContent">
+	<body class="home">
+		<form action="addMovie.php" class="addContent">
 		  	<div>
 		    	<input type="submit" value="Add Content" method="post" />
 		  	</div>
 		</form>
 		<fieldset>
 		<legend>Watched/Unwatched for each in user movies</legend>
-			<form action="editMovie.html">
+			<form action="editMovie.php">
 			  	<div>
 			    	<input type="submit" value="EDIT" />
 			  	</div>
