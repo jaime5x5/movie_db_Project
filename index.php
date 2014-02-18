@@ -1,7 +1,9 @@
 ﻿<?php
-
+	require('tester.php');
+	// var_dump($_SESSION);
+	// echo 'MD5 file hash of ' . $file . ': ' . md5_file($pwd);
 ?>
-<!-- echo 'MD5 file hash of ' . $file . ': ' . md5_file($pwd); -->
+
 <html>
 <head>
 <title>login</title>
@@ -18,7 +20,7 @@
 			  	</div>
 			  	<div>
 			    	<label for="pwd">Password:</label>
-			    	<input type="text" name="pwd" id="pwd" placeholder="enter user password" title="Please enter your password." value="" />
+			    	<input type="password" name="pwd" id="pwd" placeholder="enter user password" title="Please enter your password." value="" />
 			  	</div>
 				<div>
 			    	<input type="submit" name="login" id="login" value="LOGIN" title="Click to login."/>

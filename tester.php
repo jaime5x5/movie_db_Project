@@ -33,6 +33,19 @@ class QMDB {
 		$this->mDb->Close();
 	}
 
+	public function Logout() {
+		// Close the database connection
+		$this->mDb->Close();
+
+		// $test = $this->mDb->IsOpen();
+		// if ($test == true){
+		// 	echo "true";
+		// }
+		// $this->mDb->Close();
+
+		return true;
+	}
+
 	public function LoggedIn() {
 		return $_SESSION['uname'] != 0;
 	}
@@ -51,20 +64,30 @@ class QMDB {
 		return false;
 	}
 	public function Register($uname, $pwd) {
-			$table = "users";
-			$uid ="NULL";
-			$cols = array("uid", "uname", "pwd");
-			// var_dump($cols);
-			$data = array( NULL, $uname, $pwd);
-			// var_dump($data);
-			$results = $this->mDb->Insert( $table, $cols, $data );	
-			if($results) {
-				return true;
-		}		
-		return false;
-	}
+		$results = $this->mDb->Query( "SELECT * FROM  " . DB_NAME . " . users WHERE uname='" . $uname . "' AND pwd='" . $pwd . "';");
+		if($results) {
 
-	private function getUserName($uid) {
+			if ( $row = mysqli_fetch_assoc($results)){
+				header("Location: ucreateError.php");
+			}
+			else {
+				$table = "users";
+				$uid ="NULL";
+				$cols = array("uid", "uname", "pwd");				
+				$data = array( NULL, $uname, $pwd);				
+				$res = $this->mDb->Insert( $table, $cols, $data );
+
+				if($res) {
+					$_SESSION['uname'] = $uname;
+					return true;						
+				}
+			}		
+		}
+		return false;
+	}		
+// var_dump($cols);
+// var_dump($data);
+	public function getUserName($uid) {
 		$results = $this->mDb->Query( "SELECT * FROM " . DB_NAME . " . users WHERE uid='" . $uid . "';");
 		if( $row = mysqli_fetch_assoc($results) ) {
 			return $row['uname'];
@@ -74,5 +97,6 @@ class QMDB {
 };
 
 $qmdb = new QMDB();
+// instance of created
 
 ?>

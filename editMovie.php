@@ -31,7 +31,7 @@
 
 			  	<div>
 			    	<label for="rel_date">Date Released:</label>
-			    	<input type="text" name="rel_date" id="rel_date" placeholder="enter date released" value="10/27/1980" />
+			    	<input type="datetime-local" name="rel_date" id="rel_date" placeholder="2014-2-16 13:00" value="" />
 			  	</div>
 
 			    <div>
@@ -62,7 +62,7 @@
 
 			  	<div>
 			    	<label for="watched_date">Watched Date:</label>
-			    	<input type="text" name="watched_date" id="watched_date" placeholder="enter date watched" value="10/31/1980" />
+			    	<input type="datetime-local" name="watched_date" id="watched_date" placeholder="2014-2-16 13:00" value="" />
 			  	</div>
 
 			  	<fieldset>
