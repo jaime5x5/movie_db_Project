@@ -94,6 +94,13 @@ class QMDB {
 		}		
 	}
 
+	public function getMovies($showNewestFirst = false) {
+		$allmovies = $this->mDb->Query( "SELECT * FROM  " . DB_NAME . " . movies" .
+			" LIMIT 0, 15" . ($showNewestFirst ? " ORDER BY mid DESC" : "") . ";"
+		);
+		return $allmovies;
+	}
+
 };
 
 $qmdb = new QMDB();

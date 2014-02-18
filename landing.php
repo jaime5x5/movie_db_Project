@@ -1,5 +1,5 @@
 ﻿<?php 
-var_dump($_POST);
+// var_dump($_POST);
 require('tester.php');
 // var_dump($_SESSION);
 	if ($_SERVER["REQUEST_METHOD"] == "POST") {

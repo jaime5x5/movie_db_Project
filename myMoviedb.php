@@ -1,5 +1,5 @@
 <?php 
-// var_dump($_POST);
+var_dump($_POST);
 ?>
 <html>
 <head>
@@ -13,30 +13,78 @@
 		    	<input type="submit" value="Add Content" method="post" />
 		  	</div>
 		</form>
-		<fieldset>
-		<legend>Watched/Unwatched for each in user movies</legend>
-			<form action="editMovie.php">
-			  	<div>
-			    	<input type="submit" value="EDIT" />
-			  	</div>
-			</form>
-			<form action="#">
-			  	<div>
-			    	<label for="name">Title:</label>
-			    	<input type="text" name="title" id="title" placeholder="enter title" value="Movie Title" readonly="true" />
-			  	</div>
+		<form action="logout.php" method="post">
+			<div> 
+		    	<input type="submit" id="logout" name="logout" value="LOGOUT" />
+		  	</div>
+		</form>
+<?php
+require('tester.php');
+if ($_SERVER["REQUEST_METHOD"] == "POST") {    
+	if(isset($_POST["allmovies"])){
+	    if($_POST["allmovies"] == "ALL") {
 
-			    <fieldset>
-			    <legend>Overview</legend>
-			    	<textarea cols="30" rows="3" name="overview" id="overview" placeholder="Enter overview here" readonly="true" >This is movie description.</textarea>
-			  	</fieldset>
+			$allmovies = $qmdb->getMovies();
+			if($allmovies) {
+				while( $row = mysqli_fetch_assoc($allmovies)){
 
-			  	<div>
-			    	<label for="rel_date">Date Released:</label>
-			    	<input type="datetime-local" name="rel_date" id="rel_date" placeholder="2014-2-16 13:00" value="" readonly="true" />
-			  	</div>
+					$title = $row['title'];
+					$rel_date =  $row['rel_date'];
+					$overview = $row['overview'];
+					
+					$titles = explode(' "', $title);
+					$rel_dates = explode(' "', $rel_date);
+					$overviews = explode(' "', $overview);
+					// var_dump($titles);
+					foreach ($titles as $tit){
+						// echo "Title: $tit<br />\n";
+					}
+					// var_dump($rel_dates);
+					foreach ($rel_dates as $reldate){
+						// echo "Release date: $reldate<br />\n";
+					}
+					// var_dump($overviews);
+					foreach ($overviews as $oview){
+						// echo "Overview: $oview<br /><br /><br />\n";
+					}
+					// var_dump($title);
+					// var_dump($titles);
+					// var_dump($overview);
+					// var_dump($rel_date);
+					// echo $titles[0];
+					// echo $title;
+					print "<fieldset>\n";
+					print "<legend>Watched/Unwatched for each in user movies</legend>\n";
+					print "	<form action=\"editMovie.php\">\n";
+			  		print "	<div><input type=\"submit\" value=\"EDIT\" /></div>\n";
+			  		print "	<div>\n";
+			  		print "	<label for=\"name\">Title:</label>\n";
+			    	print "	<input type=\"text\" name=\"title\" id=\"title\" placeholder=\"enter title\" value=\"$tit\" readonly=\"true\" />\n";
+			  		print "	</div>\n";
+			  		print "	<fieldset>\n";
+			    	print "	<legend>Overview</legend>\n";
+			    	print "	<textarea cols=\"30\" rows=\"3\" name=\"overview\" id=\"overview\" placeholder=\"Enter overview here\" readonly=\"true\" >$oview</textarea>\n";
+			  		print "	</fieldset>\n";
+			  		print "	<div>\n";
+			    	print "	<label for=\"rel_date\">Date Released:</label>\n";
+			    	print "	<input type=\"input\" name=\"rel_date\" id=\"rel_date\" placeholder=\"2014-2-16 13:00\" value=\"$reldate\" readonly=\"true\" />\n";
+			  		print "	</div>\n";
+					print "	</form>\n";
+					print "	</fieldset>\n";
+								    					
+				
+				}
+			}
+		}
+	}
+}
 
-			    <div>
+
+?>
+
+
+
+<!-- 			    <div>
 			    	<label for="director">Director:</label>
 			    	<input type="text" name="director" id="director" placeholder="enter director" value="Boo Radley" readonly="true" />
 			  	</div>
@@ -114,9 +162,8 @@
 				        	<input type="text" name="prod_co" id="prod_co" placeholder="enter production company" value="Legendary" readonly="true" />
 				      	</div>
 				    </form> 
-			  	</fieldset>
+			  	</fieldset> -->
 
-			</form>
-		</fieldset>
+
 	</body>
 </html>
