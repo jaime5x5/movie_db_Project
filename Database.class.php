@@ -92,7 +92,7 @@ class Database {
 		
 		if( $this->isOpen ) {
 			//Build the insert statement to specify the table/columns to use
-			$str = "INSERT INTO " . "`cscd378_project`" . "." . "`" . mysqli_real_escape_string( $this->db, $table ) ."`";
+			$str = "INSERT INTO " . "`cs378_project`" . "." . "`" . mysqli_real_escape_string( $this->db, $table ) ."`";
 			// echo $cols;
 			if( is_array( $cols ) ) {
 				$str .= " (";

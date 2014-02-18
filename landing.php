@@ -1,5 +1,5 @@
 ﻿<?php 
-// var_dump($_POST);
+var_dump($_POST);
 require('tester.php');
 // var_dump($_SESSION);
 	if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -21,7 +21,7 @@ require('tester.php');
 					}					
 				}
 				else {
-						header("Location: loginError.php");
+					header("Location: loginError.php");
 				}
 			}
 	    } 
