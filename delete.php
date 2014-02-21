@@ -1,4 +1,4 @@
-<?
+<?php
 //TODO check verification
 
 require_once 'model.php';
