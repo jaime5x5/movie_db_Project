@@ -1,4 +1,4 @@
-<?
+<?php
 //TODO check verification
 
 require_once 'model.php';
@@ -54,7 +54,7 @@ $db->close();
 			?>
 			Date watched: <input type="input" name="date" value="<?php echo $date['year'].'-'.$date['mon'].'-'.$date['mday'] ?>" />
 			<input type="submit" name="w" value="Set Watched" />
-			<? endif; ?>
+			<?php endif; ?>
 			<input type="submit" name="cancel" value="Cancel" />
 		</form>
 	</body>
