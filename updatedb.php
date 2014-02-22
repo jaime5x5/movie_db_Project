@@ -9,11 +9,12 @@ if (isset($_POST['submit']) && isset($_POST['group'])){
 	$mysqli = getDatabase();
 	
 	$mid = $_POST['group'];
+	$uid = $_SESSION['uid'];
 
 	// Check for existing movie (apparently can't do select * for this)
-	$query = "SELECT title FROM movies WHERE tmdbid =?";
+	$query = "SELECT title FROM movies WHERE tmdbid =? and uid = ?";
 	$stmt = $mysqli->prepare($query);
-	$stmt->bind_param("i", $mid);
+	$stmt->bind_param("ii", $mid, $uid);
 	$stmt->execute();
 	$stmt->bind_result($result);
 	$stmt->fetch();	
@@ -28,7 +29,7 @@ if (isset($_POST['submit']) && isset($_POST['group'])){
 		$res_detail = $tmdb->movieDetail($mid);
 
 		// Get the movie detail fields
-		$uid = $_SESSION['uid'];//3;//debug: hardcoded uid
+		//$uid = $_SESSION['uid'];
 		$title = $res_detail['title'];
 		$imdb = $res_detail['imdb_id'];
 		$ov = $res_detail['overview'];
