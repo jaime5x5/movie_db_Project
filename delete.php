@@ -1,11 +1,14 @@
 <?php
 //TODO check verification
+session_start();
 
 require_once 'model.php';
 
 //TODO temp values these should be pulled from the verification
-$uname = 'rick';
-$uid = '3';
+//$uname = 'rick';
+//$uid = '3';
+$uname = $_SESSION['uname'];
+$uid = $_SESSION['uid'];
 
 
 if(!isset($_GET['mid']) && !isset($_POST['mid']))

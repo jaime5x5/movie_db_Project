@@ -1,11 +1,14 @@
 <?php
 //TODO check verification
+session_start();
 
 require_once 'model.php';
 
 //TODO temp values these should be pulled from the verification
-$uname = 'rick';
-$uid = '3';
+$uname = $_SESSION['uname'];
+$uid = $_SESSION['uid'];
+//$uname = 'rick';
+//$uid = '3';
 
 
 const PAGESIZE = 10; //just hard code :)
@@ -39,13 +42,14 @@ $urle = urlencode("view.php?filter=$filter&page=$pageNum"); //I ended up using t
 		<title><?php echo $uname?> - View Movies</title>
 	</head>
 	<body>
-		<h1><?php echo $uname?> - View Movies</h1><br />
+		<h1>Welcome <?php echo $uname?> - View Movies</h1><br />
 		<a href="<?php echo "addMovie.php?ref=$urle" ?>">Add Movie</a>&nbsp;&nbsp;
-		<a href="<?php echo "addtmdb.php?ref=$urle" ?>">Add Movie From TMDB</a>&nbsp;&nbsp;
+		<a href="<?php $_SESSION['uid'] = $uid; echo "addtmdb.php?ref=$urle" ?>">Add Movie From TMDB</a>&nbsp;&nbsp;
 		<hr>
 		<a href="<?php echo "view.php?filter=w" ?>">View Watched</a>&nbsp;&nbsp;
 		<a href="<?php echo "view.php?filter=u" ?>">View Unwatched</a>&nbsp;&nbsp;
-		<a href="<?php echo "view.php?filter=a" ?>">View All</a>
+		<a href="<?php echo "view.php?filter=a" ?>">View All</a>&nbsp;&nbsp;
+		<a href="login.php" id="logout-button">Logout</a>
 		<br /><br />
 		<?php
 			if($movieCount > 0):

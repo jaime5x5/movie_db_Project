@@ -1,3 +1,7 @@
+<?php
+session_start();
+
+?>
 <html>
 	<head>
 		<title>Add Movie from Internet Movie DB</title>
