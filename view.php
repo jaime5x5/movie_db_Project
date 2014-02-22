@@ -1,14 +1,16 @@
 <?php
-//TODO check verification
 session_start();
+
+if(!isset($_SESSION['uid']))
+{
+	header("Location: login.php");
+	die();
+}
 
 require_once 'model.php';
 
-//TODO temp values these should be pulled from the verification
 $uname = $_SESSION['uname'];
 $uid = $_SESSION['uid'];
-//$uname = 'rick';
-//$uid = '3';
 
 
 const PAGESIZE = 10; //just hard code :)
@@ -49,7 +51,7 @@ $urle = urlencode("view.php?filter=$filter&page=$pageNum"); //I ended up using t
 		<a href="<?php echo "view.php?filter=w" ?>">View Watched</a>&nbsp;&nbsp;
 		<a href="<?php echo "view.php?filter=u" ?>">View Unwatched</a>&nbsp;&nbsp;
 		<a href="<?php echo "view.php?filter=a" ?>">View All</a>&nbsp;&nbsp;
-		<a href="login.php" id="logout-button">Logout</a>
+		<a href="logout.php" id="logout-button">Logout</a>
 		<br /><br />
 		<?php
 			if($movieCount > 0):
@@ -62,7 +64,7 @@ $urle = urlencode("view.php?filter=$filter&page=$pageNum"); //I ended up using t
 					<th>Actions</th>
 				</tr>
 		<?php	
-				while ( $a = $results->fetch_assoc() ) :
+				foreach ($results as $i => $a) :
 		?>
 				
 				<tr>
@@ -82,8 +84,7 @@ $urle = urlencode("view.php?filter=$filter&page=$pageNum"); //I ended up using t
 					</td>
 				</tr>
 		<?php
-				endwhile;
-				$results->free();
+				endforeach;
 		?>
 				</table>
 				page <?php echo $pageNum ?> of <?php echo $pageCount ?> <br />

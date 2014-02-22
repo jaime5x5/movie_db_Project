@@ -13,7 +13,7 @@ if (isset($_POST['submit'])){
 	
 	$query = "SELECT uid from users where uname= ? AND pwd= ?";
 	$stmt = $mysqli->prepare($query);
-	$stmt->bind_param("ss", $uname,$pwd);
+	$stmt->bind_param("ss", $uname, $pwd);
 	$stmt->execute();
 	$stmt->bind_result($result);
 	$stmt->fetch();

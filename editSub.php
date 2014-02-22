@@ -1,12 +1,8 @@
 <?php
-//TODO check verification
 session_start();
 
 require_once 'model.php';
 
-//TODO temp values these should be pulled from the verification
-//$uname = 'rick';
-//$uid = '3';
 $uname = $_SESSION['uname'];
 $uid = $_SESSION['uid'];
 
@@ -80,6 +76,9 @@ else {
 if(isset($_POST['go']))
 {
 	header("Location: movieHandler.php?mid=".$_POST['mid'].(isset($_GET['ref']) ? "&ref=".urldecode($_GET['ref']) : ""));
+	
+	if(ltrim($_POST[$vals[0]]) == '')
+		die();
 	
 	if($_POST['action'] == 'a')
 	{

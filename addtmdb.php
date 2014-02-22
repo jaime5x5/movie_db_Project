@@ -1,5 +1,9 @@
 <?php
 session_start();
+
+if(!isset($_SESSION['uid']))
+	die("Not logged in.");
+
 ?>
 <html>
 	<head>
@@ -16,7 +20,7 @@ session_start();
 				<input type="text" width="400" name="title" id="title" value="" >
 				<input type="submit" id="btnSearch" name="submit" value="Search"/>
 				<input type="button" onclick="location.href='view.php';" value="Cancel" />&nbsp;&nbsp;
-				<a href="login.php" id="logout-button">Logout</a><br><br>
+				<a href="logout.php" id="logout-button">Logout</a><br><br>
 				<img src="tmdb-logo-1.png" alt="some_text"><br>
 				<p>This product uses the TMDb API but is not endorsed or certified by TMDb.</p>				
 			</fieldset>
