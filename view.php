@@ -42,7 +42,7 @@ $urle = urlencode("view.php?filter=$filter&page=$pageNum"); //I ended up using t
 		<title><?php echo $uname?> - View Movies</title>
 	</head>
 	<body>
-		<h1><?php echo $uname?> - View Movies</h1><br />
+		<h1>Welcome <?php echo $uname?> - View Movies</h1><br />
 		<a href="<?php echo "addMovie.php?ref=$urle" ?>">Add Movie</a>&nbsp;&nbsp;
 		<a href="<?php $_SESSION['uid'] = $uid; echo "addtmdb.php?ref=$urle" ?>">Add Movie From TMDB</a>&nbsp;&nbsp;
 		<hr>
