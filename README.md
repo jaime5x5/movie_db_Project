@@ -10,18 +10,16 @@ to add/view/edit/delete movies from a personal database.  The
 user also has the ability to import movies from themoviedb.org.
 
 USAGE:
-browse http://.../login.php
+browse http://.../index.php
 
 VERSION:
+1.2  - Logout works as expected
+1.15 - Can no longer add empty movie titles
+1.1  - No more reliance on native sql driver
 1.01 - view.php: added user greeting text
-1.0 - initial release for debugging and testing
+1.0  - initial release for debugging and testing
 
 
 
 ISSUES:
-- will create a mostly empty record with no title
-- relies on mysqlnd (native driver) for get_result call
-  this is not functioning on at least bluehost but 
-  works locally on wamp for instance (with mysqlnd).
-
 
