@@ -13,7 +13,10 @@ USAGE:
 browse http://.../login.php
 
 VERSION:
+1.01 - view.php: added user greeting text
 1.0 - initial release for debugging and testing
+
+
 
 ISSUES:
 - will create a mostly empty record with no title
