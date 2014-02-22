@@ -7,8 +7,8 @@ require_once 'model.php';
 //TODO temp values these should be pulled from the verification
 // $uname = 'rick';
 // $uid = '3';
-$uname = $_SESSION['uname'];echo $uname;
-$uid = $_SESSION['uid'];echo $uid;
+$uname = $_SESSION['uname'];
+$uid = $_SESSION['uid'];
 
 if(isset($_POST["go"]) || isset($_POST['cancel']))
 {	
