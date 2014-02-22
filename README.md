@@ -9,6 +9,9 @@ The movie diary is a simple web app to allow a loggedin user
 to add/view/edit/delete movies from a personal database.  The
 user also has the ability to import movies from themoviedb.org.
 
+USAGE:
+browse http://.../login.php
+
 VERSION:
 1.0 - initial release for debugging and testing
 
