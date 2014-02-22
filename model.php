@@ -1,7 +1,34 @@
 <?php
-//session_start();
 
 require_once 'locked/security.php';
+
+//reworked from comments in http://www.php.net/manual/en/mysqli-stmt.fetch.php
+//I'm using this to replace the get_results method
+function stmt_get_assoc (&$stmt) {
+
+	$stmt->store_result();
+	$meta = $stmt->result_metadata();
+	$out = array();
+	$names = array();
+	
+	while ($column = $meta->fetch_field()) {
+   		$bindVarsArray[] = &$results[$column->name];
+		$names[] = $column->name;
+	}        
+	call_user_func_array(array($stmt, 'bind_result'), $bindVarsArray);
+	
+	// loop through all result rows
+	while ($stmt->fetch()) {
+
+    	for( $i = 0; $i < sizeof($names); $i++ )
+    	{
+        	$row_tmb[ $names[$i] ] = $bindVarsArray[$i];
+    	} 
+    	$out[] = $row_tmb;
+	}
+	
+	return $out;
+}
 
 function getFilterQuery($filter)
 {
@@ -30,17 +57,12 @@ function getPageCount($uid, $filter, $db)
     	die('Error, Could not query database.');
 	
 	$query->bind_param("i", $uid);
-	
 	$query->execute();
 	
-	$r = $query->get_result();
+	$r = stmt_get_assoc($query);
 	
-	if(! ($row = $r->fetch_assoc()) )
-		die('Error, Could not get movie count.');
+	$count = $r[0]["count"];
 	
-	$count = $row["count"];
-	
-	$r->free();
 	$query->close();
 	
 	return $count;	
@@ -60,7 +82,7 @@ function getMovies($uid, $pageNum, $pageSize, $filter, $db)
 	
 	$query->execute();
 	
-	return $query->get_result();
+	return stmt_get_assoc($query);
 }
 
 function verifyOwnership($uid, $mid, $db)
@@ -74,14 +96,10 @@ function verifyOwnership($uid, $mid, $db)
 	
 	$query->execute();
 	
-	$r = $query->get_result();
+	$r = stmt_get_assoc($query);
 	
-	if(! ($row = $r->fetch_assoc()) )
-		die('Error, Could not query database.');
+	$res = ($r[0]['count'] == 1)?TRUE:FALSE;
 	
-	$res = $row['count'];
-	
-	$r->free();
 	$query->close();
 	
 	return $res;	
@@ -98,15 +116,11 @@ function getMovie($mid, $db)
 	
 	$query->execute();
 	
-	$r = $query->get_result();
+	$r = stmt_get_assoc($query);
 	
-	if(! ($row = $r->fetch_assoc()) )
-		die('Error, Could not get movie.');
-	
-	$r->free();
 	$query->close();
 	
-	return $row;
+	return $r[0];
 }	
 
 function deleteMovie($db, $mid)
@@ -159,7 +173,7 @@ function getSub($mid, $sub,  $db)
 	
 	$query->execute();
 	
-	return $query->get_result();
+	return stmt_get_assoc($query);
 }
 
 function getSingleSub($mid, $sub, $idName, $id, $db)
@@ -173,7 +187,9 @@ function getSingleSub($mid, $sub, $idName, $id, $db)
 	
 	$query->execute();
 	
-	return $query->get_result()->fetch_assoc();
+	$res = stmt_get_assoc($query);
+	
+	return $res[0];
 }
 
 

@@ -1,18 +1,17 @@
 <?php
-//TODO check verification
 session_start();
+
+if(!isset($_SESSION['uid']))
+	die("Not logged in.");
 
 require_once 'model.php';
 
-//TODO temp values these should be pulled from the verification
-// $uname = 'rick';
-// $uid = '3';
 $uname = $_SESSION['uname'];
 $uid = $_SESSION['uid'];
 
 if(isset($_POST["go"]) || isset($_POST['cancel']))
 {	
-	if(isset($_POST["go"]))// && (!$_POST['title'] === NULL || !$_POST['title'] === ""))
+	if(isset($_POST["go"]) && ltrim($_POST['title']) != '')
 	{		
 		$db = getDatabase();
 		
@@ -48,7 +47,7 @@ if(isset($_POST["go"]) || isset($_POST['cancel']))
 				<legend>Add Movie</legend>
 				<input type="submit" name="go" value="Save" />
 				<input type="button" onclick="location.href='view.php';" value="Cancel" />&nbsp;&nbsp;
-				<a href="login.php" id="logout-button">Logout</a>
+				<a href="logout.php" id="logout-button">Logout</a>
 				<br />
 				Title:			<input type="input" 	name="title" 		value="" /><br />
 				Release Date:	<input type="input" 	name="rel_date" 	value=""/><br />

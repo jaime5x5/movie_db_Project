@@ -1,12 +1,11 @@
 <?php
-//TODO check verification
 session_start();
+
+if(!isset($_SESSION['uid']))
+	die("Not logged in.");
 
 require_once 'model.php';
 
-//TODO temp values these should be pulled from the verification
-// $uname = 'rick';
-// $uid = '3';
 $uname = $_SESSION['uname'];
 $uid = $_SESSION['uid'];
 
@@ -25,7 +24,7 @@ if(isset($_POST['mid']))
 {
 	header("Location: ". (isset($_GET['ref']) ? urldecode($_GET['ref']) : "view.php"));
 	
-	if(isset($_POST["go"]))
+	if(isset($_POST["go"]) && ltrim($_POST['title']) != '')
 	{
 		$query = $db->prepare("UPDATE movies SET title=?, rel_date=?, run_time=?, overview=?, notes=?, watched=?, watched_date=? WHERE mid = ?");
 	
@@ -87,7 +86,7 @@ $db->close();
 						<th>Actions</th>
 					</tr>
 					<?php
-					while ( $a = $cast->fetch_assoc() ) :
+					foreach ( $cast as $i => $a) :
 					?>
 					<tr>
 						<td><?php echo $a['actor'] ?></td>
@@ -97,7 +96,7 @@ $db->close();
 							<a href="editSub.php?action=d&id=<?php echo $a['cast_id'] ?>&mid=<?php echo $movie["mid"]; ?>&sub=cast<?php if(isset($_GET['ref']))echo '&ref='.$_GET['ref']?>">delete</a>
 						</td>
 					</tr>
-					<?php endwhile; ?>
+					<?php endforeach; ?>
 					</table>
 				</fieldset>
 				<fieldset>
@@ -110,7 +109,7 @@ $db->close();
 						<th>Actions</th>
 					</tr>
 					<?php
-					while ( $a = $crew->fetch_assoc() ) :
+					foreach ( $crew as $i => $a) :
 					?>
 					<tr>
 						<td><?php echo $a['cname'] ?></td>
@@ -120,7 +119,7 @@ $db->close();
 							<a href="editSub.php?action=d&id=<?php echo $a['crew_id'] ?>&mid=<?php echo $movie["mid"]; ?>&sub=crew<?php if(isset($_GET['ref']))echo '&ref='.$_GET['ref']?>">delete</a>
 						</td>
 					</tr>
-					<?php endwhile; ?>
+					<?php endforeach; ?>
 					</table>
 				</fieldset>
 				<fieldset>
@@ -133,7 +132,7 @@ $db->close();
 						<th>Actions</th>
 					</tr>
 					<?php
-					while ( $a = $directors->fetch_assoc() ) :
+					foreach ( $directors as $i => $a) :
 					?>
 					<tr>
 						<td><?php echo $a['dname'] ?></td>
@@ -143,7 +142,7 @@ $db->close();
 							<a href="editSub.php?action=d&id=<?php echo $a['did'] ?>&mid=<?php echo $movie["mid"]; ?>&sub=directors<?php if(isset($_GET['ref']))echo '&ref='.$_GET['ref']?>">delete</a>
 						</td>
 					</tr>
-					<?php endwhile; ?>
+					<?php endforeach; ?>
 					</table>
 				</fieldset>
 				<fieldset>
@@ -155,7 +154,7 @@ $db->close();
 						<th>Actions</th>
 					</tr>
 					<?php
-					while ( $a = $producers->fetch_assoc() ) :
+					foreach ( $producers as $i => $a) :
 					?>
 					<tr>
 						<td><?php echo $a['producer_name'] ?></td>
@@ -164,7 +163,7 @@ $db->close();
 							<a href="editSub.php?action=d&id=<?php echo $a['pid'] ?>&mid=<?php echo $movie["mid"]; ?>&sub=producers<?php if(isset($_GET['ref']))echo '&ref='.$_GET['ref']?>">delete</a>
 						</td>
 					</tr>
-					<?php endwhile; ?>
+					<?php endforeach; ?>
 					</table>
 				</fieldset>
 				<fieldset>
@@ -176,7 +175,7 @@ $db->close();
 						<th>Actions</th>
 					</tr>
 					<?php
-					while ( $a = $production->fetch_assoc() ) :
+					foreach ( $production as $i => $a) :
 					?>
 					<tr>
 						<td><?php echo $a['prod_co'] ?></td>
@@ -185,7 +184,7 @@ $db->close();
 							<a href="editSub.php?action=d&id=<?php echo $a['production_id'] ?>&mid=<?php echo $movie["mid"]; ?>&sub=production<?php if(isset($_GET['ref']))echo '&ref='.$_GET['ref']?>">delete</a>
 						</td>
 					</tr>
-					<?php endwhile; ?>
+					<?php endforeach; ?>
 					</table>
 				</fieldset>
 				<fieldset>
@@ -198,7 +197,7 @@ $db->close();
 						<th>Actions</th>
 					</tr>
 					<?php
-					while ( $a = $writers->fetch_assoc() ) :
+					foreach ( $writers as $i => $a) :
 					?>
 					<tr>
 						<td><?php echo $a['wname'] ?></td>
@@ -208,7 +207,7 @@ $db->close();
 							<a href="editSub.php?action=d&id=<?php echo $a['wid'] ?>&mid=<?php echo $movie["mid"]; ?>&sub=writers<?php if(isset($_GET['ref']))echo '&ref='.$_GET['ref']?>">delete</a>
 						</td>
 					</tr>
-					<?php endwhile; ?>
+					<?php endforeach; ?>
 					</table>
 				</fieldset>
 			</fieldset>
