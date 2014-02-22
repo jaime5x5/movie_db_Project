@@ -13,6 +13,8 @@ USAGE:
 browse http://.../index.php
 
 VERSION:
+1.3 - Fixed bug that wouldnt allow diff
+users to import the same tmdb record.
 1.2  - Logout works as expected
 1.15 - Can no longer add empty movie titles
 1.1  - No more reliance on native sql driver
