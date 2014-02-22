@@ -1,95 +1,141 @@
 <?php
-
-require_once 'locked/security.php';
+session_start();
 
 if (isset($_POST['submit']) && isset($_POST['group'])){
 	
-	include('db.php');
+	//include('db.php');
+	require_once 'model.php';
 	
-	$mid = $_POST['group'];	
-	$result = mysqli_query($conn, "SELECT * FROM movies WHERE tmdbid = $mid;");
+	$mysqli = getDatabase();
 	
-	if (!mysqli_num_rows($result) > 0){
+	$mid = $_POST['group'];
+
+	// Check for existing movie (apparently can't do select * for this)
+	$query = "SELECT title FROM movies WHERE tmdbid =?";
+	$stmt = $mysqli->prepare($query);
+	$stmt->bind_param("i", $mid);
+	$stmt->execute();
+	$stmt->bind_result($result);
+	$stmt->fetch();	
+	
+	// Movie doesn't exist, add it.
+	if ($result === NULL || $result === ""){
 		include ("tmdbwrapper.php");
-		$apikey = __tmdb__apikey;
+		$apikey = "f2f9f5ec6fc895af90a3a440a8a64696";
 		$tmdb = new tmdbwrapper($apikey);
 		
-		$res_detail = $tmdb -> movieDetail($mid);		
-				
-		$uid = 3;
-		$title = mysqli_real_escape_string($conn, $res_detail['title']);
-		$imdb = $res_detail['imdb_id'];			
-		$ov = mysqli_real_escape_string($conn, $res_detail['overview']);		
+		// Call API for movie detail
+		$res_detail = $tmdb->movieDetail($mid);
+
+		// Get the movie detail fields
+		$uid = $_SESSION['uid'];//3;//debug: hardcoded uid
+		$title = $res_detail['title'];
+		$imdb = $res_detail['imdb_id'];
+		$ov = $res_detail['overview'];
 		$rel = $res_detail['release_date'];
 		$run = $res_detail['runtime'];
 		$tmdbid = $mid;
+		$notes = "";
+		$watched = 0;
+		$watched_date = NULL;
 		
+		// Check for empty or null title after API call, assume trouble,
+		// and bail.
 		if ($title == "" || $title == NULL) {
-			header("Location: addtmdb.php");			
-			die();						
+			header("Location: addtmdb.php");
+			die();
 		}
 		
-		mysqli_query($conn, "INSERT INTO `movies`(uid,tmdbid,title,overview,rel_date,run_time,imdbid,
-			notes,watched,watched_date)
-		VALUES ('$uid','$tmdbid','$title','$ov','$rel','$run','$imdb','','FALSE',null)")
-			or die(mysqli_error($conn));
+		// Initial insert of core movie details
+		$query = "INSERT INTO movies (uid,tmdbid,title,overview,rel_date,run_time,imdbid,
+			notes,watched,watched_date)	VALUES (?,?,?,?,?,?,?,?,?,?)";
+		$stmt = $mysqli->prepare($query);
+		$stmt->bind_param("iissssssis", $uid, $tmdbid, $title, $ov, $rel, $run, $imdb, $notes, 
+			$watched, $watched_date);
+		$stmt->execute();
 		
-		$insert_id = mysqli_insert_id($conn);	
+		// Get the movie ID of our last insert, and reference
+		// it from here on.
+		$insert_id = $mysqli->insert_id;
 		
-		if (count($res_detail['production_companies']) > 0){
-			
+		// Production company handler
+		if (count($res_detail['production_companies']) > 0){			
+			$query = "INSERT INTO production (production_id, mid, prod_co) VALUES (?, ?, ?)";
+			$stmt = $mysqli->prepare($query);
+			$prod_id = NULL;
 			foreach($res_detail['production_companies'] as $val){
-				$pco = mysqli_real_escape_string($conn, $val['name']);
-				mysqli_query($conn, "INSERT INTO `production`(production_id,mid,prod_co)
-					VALUES (NULL, '$insert_id','$pco')")
-					or die(mysqli_error($conn));
+				$pco = $val['name'];
+				$stmt->bind_param("iis", $prod_id, $insert_id, $pco);
+				$stmt->execute();
 			}
 		}	
 		
-		$res_crew = $tmdb -> movieCrew ($mid);		
+		// API call for cast and crew detail
+		$res_crew = $tmdb->movieCrew ($mid);
 		
+		// Cast handler
+		$query = "INSERT INTO cast (cast_id,mid,actor,role) VALUES (?, ?, ?, ?)";
+		$stmt = $mysqli->prepare($query);
+		$cast_id = NULL;
 		foreach($res_crew['cast'] as $rc){
-			$name = mysqli_real_escape_string($conn, $rc['name']);
-			$char = mysqli_real_escape_string($conn, $rc['character']);
-			mysqli_query($conn, "INSERT INTO `cast`(cast_id,mid,actor,role)
-				VALUES (NULL, '$insert_id','$name','$char')")
-				or die(mysqli_error($conn));									
+			$name = $rc['name'];
+			$char = $rc['character'];
+			$stmt->bind_param("iiss", $cast_id, $insert_id, $name, $char);
+			$stmt->execute();
 		}
 		
+		// prepare remaining queries out here - these are processed OUTSIDE
+		// of the foreach and eliminate repeatd INSERT command processing to db
+		$query_dir = "INSERT INTO directors (did,mid,dname,djob) VALUES (?, ?, ?, ?)";
+		$stmt_d = $mysqli->prepare($query_dir);
+		
+		$query_prod = "INSERT INTO producers (pid,mid,producer_name) VALUES (?, ?, ?)";
+		$stmt_p = $mysqli->prepare($query_prod);
+		
+		$query_wri = "INSERT INTO writers (wid,mid,wname,wjob) VALUES (?, ?, ?, ?)";
+		$stmt_w = $mysqli->prepare($query_wri);
+		
+		$query_crew = "INSERT INTO crew (crew_id,mid,cname,cjob) VALUES (?, ?, ?, ?)";
+		$stmt_c = $mysqli->prepare($query_crew);
+		
+		$i = NULL;// can't use this by ref directly in bind_param, so just use a const val
+		
+		// Directing, Producers, Writers, and all else handled here...
 		foreach($res_crew['crew'] as $rc){
-			$name = mysqli_real_escape_string($conn, $rc['name']);
-			$job = mysqli_real_escape_string($conn, $rc['job']);
-			$dept = mysqli_real_escape_string($conn, $rc['department']);
-			
+			$name = $rc['name'];
+			$job = $rc['job'];
+			$dept = $rc['department'];
+
 			switch($dept){
 				case "Directing":
-					mysqli_query($conn, "INSERT INTO `directors`(did,mid,dname,djob)
-					VALUES (NULL, '$insert_id','$name','$job')")
-					or die(mysqli_error($conn));
+					$stmt_d->bind_param("iiss", $i, $insert_id, $name, $job);
+					$stmt_d->execute();
 					break;
 				case "Production":
-					mysqli_query($conn, "INSERT INTO `producers`(pid,mid,producer_name)
-					VALUES (NULL, '$insert_id','$name')") 
-					or die(mysqli_error($conn));
+					$stmt_p->bind_param("iis", $i, $insert_id, $name);
+					$stmt_p->execute();
 					break;
 				case "Writing":
-					mysqli_query($conn, "INSERT INTO `writers`(wid,mid,wname,wjob)
-					VALUES (NULL, '$insert_id','$name','$job')") 
-					or die(mysqli_error($conn));
+					$stmt_w->bind_param("iiss", $i, $insert_id, $name, $job);
+					$stmt_w->execute();
 					break;
 				default:
-					mysqli_query($conn, "INSERT INTO `crew`(crew_id,mid,cname,cjob)
-					VALUES (NULL, '$insert_id','$name','$job')") 
-					or die(mysqli_error($conn));
+					$stmt_c->bind_param("iiss", $i, $insert_id, $name, $job);
+					$stmt_c->execute();
 				}												
+		}
+		if(isset($_SERVER['HTTP_REFERER'])){
+			echo "<a href='addtmdb.php'>Movie successfully added! Go back</a>";
 		}					
-		echo "Movie successfully added!";
+		//echo "Movie successfully added!";		
 	}
 	else{
 		echo "Movie already exists.";
 		return false;
-	}	
-	mysqli_close($conn);
+	}
+	// Cleanup and shut off the db connections
+	$stmt->close();	
+	$mysqli->close();
 }
 else {
 	header("Location: addtmdb.php");

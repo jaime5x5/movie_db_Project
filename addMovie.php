@@ -1,16 +1,19 @@
 <?php
 //TODO check verification
+session_start();
 
 require_once 'model.php';
 
 //TODO temp values these should be pulled from the verification
-$uname = 'rick';
-$uid = '3';
+// $uname = 'rick';
+// $uid = '3';
+$uname = $_SESSION['uname'];echo $uname;
+$uid = $_SESSION['uid'];echo $uid;
 
 if(isset($_POST["go"]) || isset($_POST['cancel']))
 {	
-	if(isset($_POST["go"]))
-	{
+	if(isset($_POST["go"]))// && (!$_POST['title'] === NULL || !$_POST['title'] === ""))
+	{		
 		$db = getDatabase();
 		
 		$query = $db->prepare("INSERT INTO movies SET title=?, rel_date=?, run_time=?, overview=?, notes=?, watched=?, watched_date=?, uid=?");
@@ -21,11 +24,11 @@ if(isset($_POST["go"]) || isset($_POST['cancel']))
 		$watched = (isset($_POST['watched'])?1:0);
 	
 		$query->bind_param("sssssisi", $_POST['title'], $_POST['rel_date'], $_POST['run_time'], $_POST['overview'], $_POST['notes'], $watched, $_POST['watched_date'], $uid);
-	
+		
 		$query->execute();
 		
 		$db->close();
-		
+				
 		//header("Location: movieHandler.php?mid=&". (isset($_GET['ref']) ? urldecode($_GET['ref']) : ""));
 		//die("done");
 	}
@@ -44,7 +47,8 @@ if(isset($_POST["go"]) || isset($_POST['cancel']))
 			<fieldset>
 				<legend>Add Movie</legend>
 				<input type="submit" name="go" value="Save" />
-				<input type="submit" name="cancel" value="Cancel" />
+				<input type="button" onclick="location.href='view.php';" value="Cancel" />&nbsp;&nbsp;
+				<a href="login.php" id="logout-button">Logout</a>
 				<br />
 				Title:			<input type="input" 	name="title" 		value="" /><br />
 				Release Date:	<input type="input" 	name="rel_date" 	value=""/><br />

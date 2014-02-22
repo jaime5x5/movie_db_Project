@@ -1,8 +1,8 @@
 <?php
-define('__db__host', "localhost");
-define('__db__user', "root");
+define('__db__host', "");
+define('__db__user', "");
 define('__db__pass', "");
-define('__db__database', "cscd378_project");
+define('__db__database', "");
 
-define('__tmdb__apikey', "fefc8d1f1724e5323fecd446a2e31b64");
+define('__tmdb__apikey', "");
 ?>
