@@ -60,20 +60,21 @@ $db->close();
 <html>
 	<head>
 		<title><?php echo $movie["title"]; ?></title>
+		<script src="valid.js" type="text/javascript"></script>
 	</head>
 	<body>
-		<form method="post" action="movieHandler.php<?php if(isset($_GET['ref']))echo '?ref='.$_GET['ref'] ?>">
+		<form method="post" onsubmit="return validate()" action="movieHandler.php<?php if(isset($_GET['ref']))echo '?ref='.$_GET['ref'] ?>">
 			<fieldset>
 				<legend><?php echo $movie["title"]; ?></legend>
 				<input type="submit" name="go" value="Save" />
-				<input type="submit" name="cancel" value="Cancel" />
+				<input type="button" onclick="location.href='<?php if(isset($_GET['ref']))echo $_GET['ref']; else echo "view.php" ?>';" value="Cancel" />
 				<br />
 				<input type="hidden" name="mid" value="<?php echo $movie['mid'] ?>" />
-				Title:			<input type="input" 	name="title" 		value="<?php echo $movie["title"]; ?>" /><br />
-				Release Date:	<input type="input" 	name="rel_date" 	value="<?php echo $movie["rel_date"]; ?>"/><br />
-				Run Time:		<input type="input" 	name="run_time" 	value="<?php echo $movie["run_time"]; ?>"/><br />
+				Title:			<input type="input" 	name="title" 		value="<?php echo $movie["title"]; ?>" id="title"/><br />
+				Release Date:	<input type="input" 	name="rel_date" 	value="<?php echo $movie["rel_date"]; ?>" id="rdate"/><br />
+				Run Time:		<input type="input" 	name="run_time" 	value="<?php echo $movie["run_time"]; ?>" id="rtime"/><br />
 				Watched:		<input type="checkbox"  name="watched"  <?php echo $movie["watched"]?"checked":""; ?>/>
-				On:				<input type="input" 	name="watched_date"  value="<?php echo $movie["watched_date"]; ?>"/><br />
+				On:				<input type="input" 	name="watched_date"  value="<?php echo $movie["watched_date"]; ?>" id="wdate"/><br />
 				Overview:<br /> <textarea name="overview" rows="8" cols="100"><?php echo $movie["overview"]; ?></textarea><br />
 				Notes:<br /> 	<textarea name="notes" rows="8" cols="100"><?php echo $movie["notes"]; ?></textarea><br />
 				<fieldset>
@@ -213,4 +214,13 @@ $db->close();
 			</fieldset>
 		</form>
 	</body>
+	<script type="text/javascript">
+		function validate()
+		{
+			return checkNotEmpty("title", "Title")
+				&& checkDate("rdate", "Release Date")
+				&& checkTime("rtime", "Run Time")
+				&& checkDate("wdate", "Watched Date");
+		}
+	</script>
 </html>

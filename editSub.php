@@ -155,10 +155,11 @@ if($action != 'a')
 <html>
 	<head>
 		<title><?php echo $actionWord .' '. $sub?></title>
+		<script src="valid.js" type="text/javascript"></script>
 	</head>
 	<body>
 		<h2><?php echo $actionWord .' '. $sub?></h2>
-		<form method="post" action="editSub.php<?php if(isset($_GET['ref']))echo '?ref='.urlencode($_GET['ref']) ?>">
+		<form method="post" onsubmit="return validate()" action="editSub.php<?php if(isset($_GET['ref']))echo '?ref='.urlencode($_GET['ref']) ?>">
 			<table>
 			<tr>
 			<?php
@@ -176,7 +177,7 @@ if($action != 'a')
 				foreach ($vals as $key => $value) :
 			?>
 				<th>
-					<input type="text" name="<?php echo $value ?>" value="<?php if($action != "a") echo $set[$value] ?>" <?php if($action == 'd') echo "readonly" ?>/>
+					<input type="text" id="<?php echo $value ?>" name="<?php echo $value ?>" value="<?php if($action != "a") echo $set[$value] ?>" <?php if($action == 'd') echo "readonly" ?>/>
 				</th>
 			<?php
 				endforeach;
@@ -188,7 +189,13 @@ if($action != 'a')
 			<input type="hidden" name="sub" value="<?php echo $sub ?>" />
 			<input type="hidden" name="action" value="<?php echo $action ?>" />
 			<input type="submit" name="go" value="<?php echo $actionWord ?>" />
-			<input type="submit" name="cancel" value="Cancel" />
+			<input type="button" onclick="location.href='<?php echo "movieHandler.php?mid=".$_GET['mid'].(isset($_GET['ref']) ? "&ref=".urlencode($_GET['ref']) : "") ?>';" value="Cancel" />
 		</form>
 	</body>
+	<script type="text/javascript">
+		function validate()
+		{
+			return checkNotEmpty("<?php echo $vals[0] ?>", "<?php echo $nice[0] ?>");
+		}
+	</script>
 </html>
