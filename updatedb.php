@@ -3,7 +3,6 @@ session_start();
 
 if (isset($_POST['submit']) && isset($_POST['group'])){
 	
-	//include('db.php');
 	require_once 'model.php';
 	
 	$mysqli = getDatabase();
@@ -11,7 +10,6 @@ if (isset($_POST['submit']) && isset($_POST['group'])){
 	$mid = $_POST['group'];
 	$uid = $_SESSION['uid'];
 
-	// Check for existing movie (apparently can't do select * for this)
 	$query = "SELECT title FROM movies WHERE tmdbid =? and uid = ?";
 	$stmt = $mysqli->prepare($query);
 	$stmt->bind_param("ii", $mid, $uid);
@@ -19,16 +17,13 @@ if (isset($_POST['submit']) && isset($_POST['group'])){
 	$stmt->bind_result($result);
 	$stmt->fetch();	
 	
-	// Movie doesn't exist, add it.
 	if ($result === NULL || $result === ""){
 		include ("tmdbwrapper.php");
 		$apikey = "f2f9f5ec6fc895af90a3a440a8a64696";
 		$tmdb = new tmdbwrapper($apikey);
 		
-		// Call API for movie detail
 		$res_detail = $tmdb->movieDetail($mid);
 
-		// Get the movie detail fields
 		$title = $res_detail['title'];
 		$imdb = $res_detail['imdb_id'];
 		$ov = $res_detail['overview'];
@@ -39,14 +34,11 @@ if (isset($_POST['submit']) && isset($_POST['group'])){
 		$watched = 0;
 		$watched_date = NULL;
 		
-		// Check for empty or null title after API call, assume trouble,
-		// and bail.
 		if ($title == "" || $title == NULL) {
 			header("Location: addtmdb.php");
 			die();
 		}
 		
-		// Initial insert of core movie details
 		$query = "INSERT INTO movies (uid,tmdbid,title,overview,rel_date,run_time,imdbid,
 			notes,watched,watched_date)	VALUES (?,?,?,?,?,?,?,?,?,?)";
 		$stmt = $mysqli->prepare($query);
@@ -54,11 +46,8 @@ if (isset($_POST['submit']) && isset($_POST['group'])){
 			$watched, $watched_date);
 		$stmt->execute();
 		
-		// Get the movie ID of our last insert, and reference
-		// it from here on.
 		$insert_id = $mysqli->insert_id;
 		
-		// Production company handler
 		if (count($res_detail['production_companies']) > 0){			
 			$query = "INSERT INTO production (production_id, mid, prod_co) VALUES (?, ?, ?)";
 			$stmt = $mysqli->prepare($query);
@@ -70,10 +59,8 @@ if (isset($_POST['submit']) && isset($_POST['group'])){
 			}
 		}	
 		
-		// API call for cast and crew detail
 		$res_crew = $tmdb->movieCrew ($mid);
 		
-		// Cast handler
 		$query = "INSERT INTO cast (cast_id,mid,actor,role) VALUES (?, ?, ?, ?)";
 		$stmt = $mysqli->prepare($query);
 		$cast_id = NULL;
@@ -84,8 +71,6 @@ if (isset($_POST['submit']) && isset($_POST['group'])){
 			$stmt->execute();
 		}
 		
-		// prepare remaining queries out here - these are processed OUTSIDE
-		// of the foreach and eliminate repeatd INSERT command processing to db
 		$query_dir = "INSERT INTO directors (did,mid,dname,djob) VALUES (?, ?, ?, ?)";
 		$stmt_d = $mysqli->prepare($query_dir);
 		
@@ -98,9 +83,8 @@ if (isset($_POST['submit']) && isset($_POST['group'])){
 		$query_crew = "INSERT INTO crew (crew_id,mid,cname,cjob) VALUES (?, ?, ?, ?)";
 		$stmt_c = $mysqli->prepare($query_crew);
 		
-		$i = NULL;// can't use this by ref directly in bind_param, so just use a const val
+		$i = NULL;
 		
-		// Directing, Producers, Writers, and all else handled here...
 		foreach($res_crew['crew'] as $rc){
 			$name = $rc['name'];
 			$job = $rc['job'];
@@ -126,14 +110,14 @@ if (isset($_POST['submit']) && isset($_POST['group'])){
 		}
 		if(isset($_SERVER['HTTP_REFERER'])){
 			echo "<a href='addtmdb.php'>Movie successfully added! Go back</a>";
-		}					
-		//echo "Movie successfully added!";		
+		}				
 	}
 	else{
-		echo "Movie already exists.";
+		if(isset($_SERVER['HTTP_REFERER'])){
+			echo "<a href='addtmdb.php'>Movie already exists! Go back</a>";
+		}
 		return false;
 	}
-	// Cleanup and shut off the db connections
 	$stmt->close();	
 	$mysqli->close();
 }
