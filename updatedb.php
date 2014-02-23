@@ -29,7 +29,6 @@ if (isset($_POST['submit']) && isset($_POST['group'])){
 		$res_detail = $tmdb->movieDetail($mid);
 
 		// Get the movie detail fields
-		//$uid = $_SESSION['uid'];
 		$title = $res_detail['title'];
 		$imdb = $res_detail['imdb_id'];
 		$ov = $res_detail['overview'];
