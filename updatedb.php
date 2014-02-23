@@ -109,12 +109,14 @@ if (isset($_POST['submit']) && isset($_POST['group'])){
 				}												
 		}
 		if(isset($_SERVER['HTTP_REFERER'])){
-			echo "<a href='addtmdb.php'>Movie successfully added! Go back</a>";
+			// echo "<a href='addtmdb.php'>Movie successfully added! Go back</a>";
+			header("Location: addtmdb.php?status=success");
 		}				
 	}
 	else{
 		if(isset($_SERVER['HTTP_REFERER'])){
-			echo "<a href='addtmdb.php'>Movie already exists! Go back</a>";
+			// echo "<a href='addtmdb.php'>Movie already exists! Go back</a>";
+			header("Location: addtmdb.php?status=fail");
 		}
 		return false;
 	}

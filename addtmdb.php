@@ -3,7 +3,6 @@ session_start();
 
 if(!isset($_SESSION['uid']))
 	die("Not logged in.");
-
 ?>
 <html>
 	<head>
@@ -15,8 +14,17 @@ if(!isset($_SESSION['uid']))
 				<legend>
 					Internet Movie Search
 				</legend>
+				<p>
+					<?php if(isset($_GET['status']) && $_GET['status'] == 'success'){
+						echo "Movie succesfully added.";
+					} else if(isset($_GET['status']) && $_GET['status'] == 'fail'){
+						echo "Movie already in your list.";
+					}
+					?>		
+				</p>				
 				<label>Enter movie title:</label>
 				<br />
+
 				<input type="text" width="400" name="title" id="title" value="" >
 				<input type="submit" id="btnSearch" name="submit" value="Search"/>
 				<input type="button" onclick="location.href='view.php';" value="Cancel" />&nbsp;&nbsp;
